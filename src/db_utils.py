@@ -5,11 +5,11 @@ import os
 
 def get_db_connection():
     return psycopg2.connect(
-        dbname="energy_forecast",
-        user="postgres",
-        password=os.getenv("PGPASSWORD", "yourpassword"),
-        host="localhost",
-        port=5432
+        dbname=os.getenv("PGDATABASE"),
+        user=os.getenv("PGUSER"),
+        password=os.getenv("PGPASSWORD"),
+        host=os.getenv("PGHOST"),
+        port=os.getenv("PGPORT", 5432)
     )
 
 def insert_weather_data(data):
