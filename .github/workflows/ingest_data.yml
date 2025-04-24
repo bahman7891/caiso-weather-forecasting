@@ -1,16 +1,24 @@
 name: Ingest CAISO and Weather Data
 
 on:
+  workflow_dispatch:     # Allow manual trigger
   schedule:
-    - cron: "0 6 * * *"  # Every day at 6 AM UTC
-  workflow_dispatch:
+    - cron: "0 6 * * *"  # Run daily at 6 AM UTC
 
 jobs:
   ingest:
     runs-on: ubuntu-latest
 
+    env:
+      PGHOST: ${{ secrets.PGHOST }}
+      PGPORT: ${{ secrets.PGPORT }}
+      PGDATABASE: ${{ secrets.PGDATABASE }}
+      PGUSER: ${{ secrets.PGUSER }}
+      PGPASSWORD: ${{ secrets.PGPASSWORD }}
+      OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -20,12 +28,13 @@ jobs:
 
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run CAISO ingestion
+      - name: Run CAISO data ingestion
         run: |
           PYTHONPATH=. python3 src/fetch_caiso.py
 
-      - name: Run weather ingestion
+      - name: Run OpenWeatherMap ingestion
         run: |
           PYTHONPATH=. python3 src/fetch_weather.py
