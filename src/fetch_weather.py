@@ -11,23 +11,23 @@ CITIES = [
 def fetch_weather():
     api_key = os.getenv("OPENWEATHER_API_KEY")
     if not api_key:
-        print("❌ OPENWEATHER_API_KEY not set.")
+        print("OPENWEATHER_API_KEY not set.")
         return
 
     print(f"📥 Fetching weather data for {len(CITIES)} cities...")
 
     records = []
     for city in CITIES:
-        print(f"🌆 City: {city}")
+        print(f"City: {city}")
         url = f"http://api.openweathermap.org/data/2.5/weather?q={city},CA,US&appid={api_key}&units=metric"
         response = requests.get(url)
 
         if response.status_code != 200:
-            print(f"⚠️ Failed for {city}: HTTP {response.status_code}")
+            print(f"Failed for {city}: HTTP {response.status_code}")
             continue
 
         weather = response.json()
-        print(f"🌦️  {city} → {weather['main']['temp']}°C, {weather['main']['humidity']}% humidity")
+        print(f"{city} → {weather['main']['temp']}°C, {weather['main']['humidity']}% humidity")
 
         record = {
             "timestamp": datetime.utcfromtimestamp(weather["dt"]),
@@ -40,9 +40,9 @@ def fetch_weather():
 
     if records:
         insert_weather_data(records)
-        print(f"✅ Inserted {len(records)} weather records.")
+        print(f"Inserted {len(records)} weather records.")
     else:
-        print("⚠️ No data inserted.")
+        print("No data inserted.")
 
 def insert_weather_data(records):
     with get_db_connection() as conn:
